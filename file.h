@@ -1,7 +1,13 @@
+#include <string>
+#include <iostream>
+
+using namespace std;
+
 class File{
 private:
-  std::string path;
-  std::string mode;
+  string path;
+  string mode;
 public:
-  void openFile(std::string p, std::string m);
+  void openFile(string p, string m);
+  string getPath();
 };
