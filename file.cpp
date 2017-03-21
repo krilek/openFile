@@ -18,7 +18,7 @@ File::~File(){
 void File::openFile(string p, string m){
 	startupSet = false;
 	if(validatePath(p)) path = p;
-	if(validateMode(m)) setParameters(&modeBin);
+	if(validateMode(m)) setParameters(modeBin);
 }
 string File::getPath(){
     return path;
@@ -33,6 +33,7 @@ bool File::validatePath(string in){
 
 	return correct;
 }
+// bool File::setFile()
 bool File::explode(string in, vector<string> *output, char delimeter){
 	for(unsigned int i = 0; i < in.length(); i++){
 		string part = "";
@@ -55,15 +56,28 @@ bool File::validateMode(string in){
 	bool correct = false;
 	correct = File::explode(in, &mode, '/');
 	if(correct){
-		cout << mode.size() << " wielkosc" << endl;
+		//cout << mode.size() << " wielkosc" << endl;
+		bool trunc = false;
+		bool app = false;
+		bool out = false;
 		for(unsigned int i = 0; i< mode.size();i++){
-			if(mode[i] == "input" || mode[i] == "read" || mode[i] == "r" ) modeBin.push_back(1);
-			else if(mode[i] == "output"||mode[i] == "write"||mode[i] == "w") modeBin.push_back(2);
+			if(mode[i] == "input" || mode[i] == "read" || mode[i] == "r" ) modeBin.push_back(8);
+			else if(mode[i] == "output"||mode[i] == "write"||mode[i] == "w"){
+				modeBin.push_back(16);
+				out = true;
+			}
 			else if(mode[i] == "binary") modeBin.push_back(4);
-			else if(mode[i] == "append") modeBin.push_back(8);
-			else if(mode[i] == "truncate") modeBin.push_back(16);
+			else if(mode[i] == "at end" || mode[i] == "atend") modeBin.push_back(2);
+			else if(mode[i] == "append"){
+				app = true;
+				modeBin.push_back(1);
+			}
+			else if(mode[i] == "truncate"){
+				trunc = true;
+				modeBin.push_back(32);
+			}
 		}
-		if(!modeBin.empty()){
+		if(!modeBin.empty() && !(trunc && app) && (trunc && out)){
 			correct = true;
 		}else{
 			correct = false;
@@ -72,6 +86,23 @@ bool File::validateMode(string in){
 	}
 	return correct;
 }
-void File::setParameters(vector<unsigned char> *m){
-
+bool File::setParameters(vector<int> m){
+	int endM = m[0];
+	for(unsigned int i=0;i<m.size();i++){
+		//cout << (int)m[i] << endl;
+		endM = endM | m[i];
+	}
+	//cout << endM;
+	// cout<< "in" << fstream::in << endl;
+	// cout << "out" << fstream::out << endl;
+	// cout << "binary"<< fstream::binary << endl;
+	// cout << "ate"<< fstream::ate << endl;
+	// cout << "app"<< fstream::app << endl;
+	// cout << "trunc"<< fstream::trunc << endl;
+	if(endM > 0){
+		endMode = endM;
+		return true;
+	}else{
+		return false;
+	}
 }

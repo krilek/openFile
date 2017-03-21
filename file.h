@@ -9,12 +9,13 @@ private:
   string path;
   bool startupSet;
   vector<string> mode;
-  vector<unsigned char> modeBin;
+  vector<int> modeBin;
+  int endMode;
   string ext;
   fstream f;
   bool validatePath(string in);
   bool validateMode(string in);
-  void setParameters(vector<unsigned char> *m);
+  bool setParameters(vector<int> m);
 public:
   File(string p, string m);
   File();
